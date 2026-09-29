@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>رسالة صغيرة لقلبي</title>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#2a0f1c; --wine:#4a1a2e; --rose:#e8a0a8; --gold:#e6c79c; --ivory:#fbf3ea;
+  --display:'Aref Ruqaa','Amiri',serif; --body:'Tajawal',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  font-family:var(--body);color:var(--ivory);line-height:2;
+  background:radial-gradient(120% 90% at 50% 0%,var(--wine) 0%,var(--night) 70%) fixed;
+  overflow-x:hidden;
+}
+canvas#petals{position:fixed;inset:0;pointer-events:none;z-index:0}
+section{position:relative;z-index:1}
+
+/* البوابة */
+#gate{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.6rem;text-align:center;padding:2rem;transition:opacity 1s,visibility 1s}
+#gate.hide{opacity:0;visibility:hidden;position:absolute;inset:0}
+.seal{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;font-size:2.6rem;
+  background:radial-gradient(circle at 35% 30%,#f0b3b9,#b8455a 70%);box-shadow:0 10px 40px rgba(232,160,168,.35);
+  animation:beat 2.2s ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}14%{transform:scale(1.1)}28%{transform:scale(1)}42%{transform:scale(1.07)}}
+#gate h1{font-family:var(--display);font-weight:400;font-size:clamp(2rem,7vw,3.4rem);color:var(--gold)}
+#gate p{color:var(--rose);font-weight:300}
+button{font-family:var(--body);cursor:pointer;border:0;font-size:1.05rem}
+.btn{padding:.85rem 2.4rem;border-radius:999px;background:var(--gold);color:var(--night);font-weight:500;transition:transform .2s,box-shadow .2s;box-shadow:0 6px 24px rgba(230,199,156,.25)}
+.btn:hover{transform:translateY(-2px)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+
+/* الرسالة */
+#letter{max-width:680px;margin:0 auto;padding:4rem 1.5rem 6rem;display:none}
+#letter.show{display:block}
+.title{font-family:var(--display);font-size:clamp(2.4rem,9vw,4rem);color:var(--gold);text-align:center;line-height:1.4;margin-bottom:2rem}
+.text p{font-size:1.15rem;font-weight:300;margin-bottom:1.3rem;min-height:2em}
+.text p.done{transition:none}
+.cursor::after{content:'';display:inline-block;width:2px;height:1.1em;background:var(--rose);margin-inline-start:4px;vertical-align:middle;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.after{opacity:0;transform:translateY(16px);transition:opacity 1.2s,transform 1.2s}
+.after.in{opacity:1;transform:none}
+
+/* صورتنا */
+.polaroid{width:min(300px,80%);margin:3rem auto 1rem;background:var(--ivory);padding:14px 14px 52px;transform:rotate(-3deg);box-shadow:0 20px 50px rgba(0,0,0,.5);position:relative}
+.polaroid .frame{aspect-ratio:1/1;background:linear-gradient(135deg,#d9a1a9,#8d3a50);display:grid;place-items:center;overflow:hidden;font-size:3rem}
+.polaroid img{width:100%;height:100%;object-fit:cover;display:block}
+.polaroid span{position:absolute;bottom:12px;inset-inline:0;text-align:center;color:var(--wine);font-family:var(--display);font-size:1.3rem}
+
+/* المشغل */
+.player{margin:2.5rem auto 0;max-width:420px;display:flex;align-items:center;gap:1rem;padding:1rem 1.2rem;border:1px solid rgba(230,199,156,.35);border-radius:18px;background:rgba(255,255,255,.04);backdrop-filter:blur(6px)}
+.play{flex:none;width:52px;height:52px;border-radius:50%;background:var(--rose);color:var(--night);font-size:1.2rem}
+.meta{flex:1;min-width:0}
+.meta b{display:block;font-weight:500;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta small{color:var(--rose);font-weight:300}
+.bar{height:4px;border-radius:4px;background:rgba(255,255,255,.15);margin-top:.5rem;cursor:pointer;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--gold)}
+
+/* السؤال */
+.ask{text-align:center;margin-top:4rem}
+.ask h2{font-family:var(--display);font-weight:400;font-size:clamp(1.7rem,6vw,2.4rem);color:var(--gold);margin-bottom:1.5rem}
+.row{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;position:relative;min-height:60px}
+.btn.ghost{background:transparent;color:var(--rose);border:1px solid var(--rose);box-shadow:none}
+.sign{margin-top:3rem;text-align:center;font-family:var(--display);font-size:1.5rem;color:var(--rose)}
+#yes{position:fixed;inset:0;z-index:5;display:none;place-items:center;text-align:center;padding:2rem;background:rgba(42,15,28,.94)}
+#yes.show{display:grid;animation:fade 1s}
+@keyframes fade{from{opacity:0}}
+#yes h2{font-family:var(--display);font-weight:400;font-size:clamp(2.2rem,8vw,3.6rem);color:var(--gold)}
+#yes p{margin-top:1rem;color:var(--rose);font-size:1.15rem}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="petals" aria-hidden="true"></canvas>
+
+<section id="gate">
+  <div class="seal">♥</div>
+  <h1 id="gateTitle"></h1>
+  <p>فيه رسالة مكتوبة ليكي بس</p>
+  <button class="btn" id="openBtn">افتحي الرسالة</button>
+</section>
+
+<section id="letter">
+  <h1 class="title" id="title"></h1>
+  <div class="text" id="text"></div>
+
+  <div class="after" id="afterBox">
+    <div class="polaroid">
+      <div class="frame" id="frame">♥</div>
+      <span id="caption"></span>
+    </div>
+
+    <div class="player">
+      <button class="play" id="play" aria-label="تشغيل الأغنية">▶</button>
+      <div class="meta">
+        <b id="songName"></b>
+        <small>الأغنية دي ليكي</small>
+        <div class="bar" id="bar"><i id="fill"></i></div>
+      </div>
+    </div>
+
+    <div class="ask">
+      <h2 id="question"></h2>
+      <div class="row">
+        <button class="btn" id="yesBtn">سامحتك</button>
+        <button class="btn ghost" id="noBtn">لسه زعلانة</button>
+      </div>
+    </div>
+    <p class="sign" id="sign"></p>
+  </div>
+</section>
+
+<div id="yes">
+  <div>
+    <h2 id="yesTitle"></h2>
+    <p id="yesText"></p>
+  </div>
+</div>
+
+<audio id="audio" loop preload="auto"></audio>
+
+<script>
+/* ============================================================
+   ✏️ الإعدادات — غيّر اللي تحبه من هنا بس
+   حط الصورة والأغنية في نفس فولدر index.html
+   ============================================================ */
+const CONFIG = {
+  herName: "حبيبتي",                  // اسمها
+  yourName: "حبيبك",                  // اسمك في الآخر
+
+  photo: "photo.jpg",                 // اسم صورتكم (jpg / png)
+  photoCaption: "أحلى صورة لينا",
+
+  song: "song.mp3",                   // اسم الأغنية
+  songTitle: "أغنيتنا",               // اسم الأغنية اللي هيظهر
+
+  title: "آسف يا قلبي",
+  paragraphs: [
+    "أنا عارف إني زعلتك، وعارف إن اعتذرت كتير بس انا بحبك والله.",
+    "مفيش حاجة في الدنيا تساوي إنك تزعلي مني، ولا أي موقف يستاهل إني أخسر ضحكتك.",
+    "أنا غلطت، وبعترف بغلطتي من غير تبرير. وبوعدك أسمعك أكتر وأحاول أكون أحسن ليكي كل يوم.",
+    "وجودك في حياتي هو أحلى حاجة حصلتلي، وعايزك تفضلي جنبي.",
+  ],
+  question: "تسامحيني؟",
+  yesTitle: "بحبك ♥",
+  yesText: "شكرًا إنك بتسامحيني، وعد مني مش هزعلك تاني.",
+};
+/* ============================================================ */
+
+const $ = id => document.getElementById(id);
+const audio = $('audio');
+
+/* تعبئة النصوص */
+$('gateTitle').textContent = `إلى ${CONFIG.herName}`;
+$('title').textContent = CONFIG.title;
+$('caption').textContent = CONFIG.photoCaption;
+$('songName').textContent = CONFIG.songTitle;
+$('question').textContent = CONFIG.question;
+$('sign').textContent = `— ${CONFIG.yourName}`;
+$('yesTitle').textContent = CONFIG.yesTitle;
+$('yesText').textContent = CONFIG.yesText;
+audio.src = CONFIG.song;
+
+/* الصورة (لو مش موجودة يفضل قلب) */
+const img = new Image();
+img.alt = CONFIG.photoCaption;
+img.onload = () => { $('frame').textContent = ''; $('frame').appendChild(img); };
+img.src = CONFIG.photo;
+
+/* كتابة الرسالة سطر بسطر */
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function typeLetter(){
+  const box = $('text');
+  const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  for(const t of CONFIG.paragraphs){
+    const p = document.createElement('p');
+    box.appendChild(p);
+    if(reduce){ p.textContent = t; continue; }
+    p.classList.add('cursor');
+    for(const ch of t){ p.textContent += ch; await sleep(ch === ' ' ? 45 : 38); }
+    p.classList.remove('cursor');
+    await sleep(500);
+  }
+  $('afterBox').classList.add('in');
+}
+
+/* فتح الرسالة + بدء الأغنية */
+$('openBtn').addEventListener('click', () => {
+  $('gate').classList.add('hide');
+  $('letter').classList.add('show');
+  scrollTo(0,0);
+  audio.volume = 0.7;
+  audio.play().then(() => setPlayUI(true)).catch(() => setPlayUI(false));
+  typeLetter();
+  burst(30);
+});
+
+/* المشغل */
+function setPlayUI(on){ $('play').textContent = on ? '❚❚' : '▶'; }
+$('play').addEventListener('click', () => {
+  if(audio.paused){ audio.play().catch(()=>{}); setPlayUI(true); }
+  else { audio.pause(); setPlayUI(false); }
+});
+audio.addEventListener('timeupdate', () => {
+  if(audio.duration) $('fill').style.width = (audio.currentTime / audio.duration * 100) + '%';
+});
+$('bar').addEventListener('click', e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  const ratio = 1 - (e.clientX - r.left) / r.width; // RTL
+  if(audio.duration) audio.currentTime = ratio * audio.duration;
+});
+
+/* زرار "لسه زعلانة" بيهرب بشياكة */
+const no = $('noBtn');
+function dodge(){
+  const row = no.parentElement.getBoundingClientRect();
+  const x = (Math.random() - .5) * Math.min(row.width, 260);
+  const y = (Math.random() - .5) * 90;
+  no.style.transition = 'transform .25s';
+  no.style.transform = `translate(${x}px,${y}px)`;
+}
+no.addEventListener('mouseenter', dodge);
+no.addEventListener('touchstart', e => { e.preventDefault(); dodge(); }, {passive:false});
+no.addEventListener('click', dodge);
+
+$('yesBtn').addEventListener('click', () => { $('yes').classList.add('show'); burst(90); });
+
+/* بتلات وردة بتنزل */
+const cv = $('petals'), cx = cv.getContext('2d');
+let W, H, petals = [];
+function resize(){ W = cv.width = innerWidth; H = cv.height = innerHeight; }
+addEventListener('resize', resize); resize();
+const cols = ['#e8a0a8','#d4728a','#f2c2c8','#c9506b','#e6c79c'];
+function petal(x, y, burstMode){
+  return { x, y: y ?? -20, s: 6 + Math.random()*9, vy: burstMode ? -2 - Math.random()*5 : .5 + Math.random()*1.2,
+    vx: burstMode ? (Math.random()-.5)*7 : (Math.random()-.5)*.6, r: Math.random()*6, vr: (Math.random()-.5)*.05,
+    c: cols[Math.floor(Math.random()*cols.length)], sw: Math.random()*6, a: burstMode ? 1 : .55 + Math.random()*.4, g: burstMode ? .09 : 0 };
+}
+function burst(n){ for(let i=0;i<n;i++) petals.push(petal(W/2, H*.6, true)); }
+for(let i=0;i<22;i++) petals.push(petal(Math.random()*innerWidth, Math.random()*innerHeight));
+function loop(){
+  cx.clearRect(0,0,W,H);
+  for(let i=petals.length-1;i>=0;i--){
+    const p = petals[i];
+    p.sw += .02; p.x += p.vx + Math.sin(p.sw)*.5; p.vy += p.g; p.y += p.vy; p.r += p.vr;
+    if(p.y > H + 30 || p.x < -40 || p.x > W + 40){
+      if(p.g){ petals.splice(i,1); continue; }
+      Object.assign(p, petal(Math.random()*W)); continue;
+    }
+    cx.save(); cx.translate(p.x,p.y); cx.rotate(p.r); cx.globalAlpha = p.a; cx.fillStyle = p.c;
+    cx.beginPath(); cx.ellipse(0,0,p.s*.55,p.s,0,0,Math.PI*2); cx.fill(); cx.restore();
+  }
+  requestAnimationFrame(loop);
+}
+if(!matchMedia('(prefers-reduced-motion:reduce)').matches) loop();
+</script>
+</body>
+</html>
